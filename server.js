@@ -37,6 +37,11 @@ app.get('/items', (req, res) => {
     res.json(itemsForSale)
 })
 
+app.post('/items', (req, res) => {
+    console.log('requestBody: ', req.body);
+    res.send("ok");
+})
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
