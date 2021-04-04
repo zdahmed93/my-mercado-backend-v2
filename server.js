@@ -1,5 +1,7 @@
 const express = require('express');
 
+const { itemValidator } = require('./utilities/validators');
+
 let itemsForSale = [
     {
         _id: '5fcc1422e17929040331de0e',
@@ -40,8 +42,12 @@ app.get('/items', (req, res) => {
 })
 
 app.post('/items', (req, res) => {
-    console.log('requestBody: ', req.body);
-    res.send("ok");
+    const validationResult = itemValidator.validate(req.body)
+    if (validationResult.error) {
+        res.json(validationResult)
+    } else {
+        res.send("ok");
+    }
 })
 
 const PORT = process.env.PORT || 5000;
