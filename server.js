@@ -81,6 +81,17 @@ app.put('/items/:id', (req, res) => {
     }
 })
 
+app.delete('/items/:id', (req, res) => {
+    const itemToDeleteId = req.params.id
+    const itemToDelete = itemsForSale.find(item => item._id === itemToDeleteId)
+    if (!itemToDelete) {
+        res.status(404).json({error: "Item not found"})
+    } else {
+        itemsForSale = itemsForSale.filter(item => item._id !== itemToDeleteId)
+        res.json({message: "Item deleted successfully"})
+    }
+})
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
