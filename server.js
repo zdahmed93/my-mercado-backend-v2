@@ -41,6 +41,15 @@ app.get('/items', (req, res) => {
     res.json(itemsForSale)
 })
 
+app.get('/items/:id', (req, res) => {
+    const item = itemsForSale.find(i => i._id === req.params.id)
+    if (item) {
+        res.json(item)
+    } else {
+        res.status(404).json({error: "Item not found"})
+    }
+})
+
 app.post('/items', (req, res) => {
     const validationResult = itemValidator.validate(req.body)
     if (validationResult.error) {
