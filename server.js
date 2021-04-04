@@ -46,7 +46,12 @@ app.post('/items', (req, res) => {
     if (validationResult.error) {
         res.json(validationResult)
     } else {
-        res.send("ok");
+        const newItem = {
+            _id: Date.now().toString(),
+            ...req.body
+        }
+        itemsForSale.push(newItem)
+        res.json({message: "Item created successfully"})
     }
 })
 
