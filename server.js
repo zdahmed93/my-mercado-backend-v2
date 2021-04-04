@@ -55,6 +55,32 @@ app.post('/items', (req, res) => {
     }
 })
 
+app.put('/items/:id', (req, res) => {
+    const itemToUpdateId = req.params.id
+    const validationResult = itemValidator.validate(req.body, { abortEarly: false })
+    if (validationResult.error) {
+        res.json(validationResult)
+    } else {
+        let itemFound = false
+        itemsForSale = itemsForSale.map(item => {
+            if (item._id === itemToUpdateId) {
+                itemFound = true
+                return {
+                    _id: item._id,
+                    ...req.body
+                }
+            } else {
+                return item
+            }
+        })
+        if (itemFound) {
+            res.json({message: "Item updated successfully"})
+        } else {
+            res.status(404).json({error: "Item not found"})
+        }
+    }
+})
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
