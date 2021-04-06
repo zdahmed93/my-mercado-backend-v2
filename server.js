@@ -1,4 +1,7 @@
 const express = require('express');
+const mongoose = require('mongoose');
+
+require('dotenv').config();
 
 const { itemValidator } = require('./utilities/validators');
 
@@ -103,6 +106,13 @@ app.delete('/items/:id', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
-});
+mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
+        .then(() => {
+            console.log('Successfully connected to MongoDB');
+            app.listen(PORT, () => {
+                console.log(`Server is listening on port ${PORT}`);
+            });
+        })
+        .catch(error => {
+            console.log(error);
+        })
