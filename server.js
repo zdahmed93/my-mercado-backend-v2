@@ -51,12 +51,16 @@ app.get('/items', async (req, res) => {
     }
 })
 
-app.get('/items/:id', (req, res) => {
-    const item = itemsForSale.find(i => i._id === req.params.id)
-    if (item) {
-        res.json(item)
-    } else {
-        res.status(404).json({error: "Item not found"})
+app.get('/items/:id', async (req, res) => {
+    try {
+        const item = await Item.findById(req.params.id)
+        if (item) {
+            res.status(200).json(item)
+        } else {
+            res.status(404).json({ error: "Item not found" })
+        }
+    } catch (error) {
+        res.status(500).json({ error })
     }
 })
 
