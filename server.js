@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const Item = require('./models/Item');
+
 require('dotenv').config();
 
 const { itemValidator } = require('./utilities/validators');
@@ -40,8 +42,13 @@ app.get('/', (req, res) => {
     res.json({ message: "Mercado Marketplace API v1" })
 })
 
-app.get('/items', (req, res) => {
-    res.json(itemsForSale)
+app.get('/items', async (req, res) => {
+    try {
+        const items = await Item.find()
+        res.status(200).json(items)
+    } catch (error) {
+        res.status(500).json({ error })
+    }
 })
 
 app.get('/items/:id', (req, res) => {
@@ -53,17 +60,23 @@ app.get('/items/:id', (req, res) => {
     }
 })
 
-app.post('/items', (req, res) => {
-    const validationResult = itemValidator.validate(req.body)
-    if (validationResult.error) {
-        res.json(validationResult)
-    } else {
-        const newItem = {
-            _id: Date.now().toString(),
-            ...req.body
-        }
-        itemsForSale.push(newItem)
-        res.json({message: "Item created successfully"})
+app.post('/items', async (req, res) => {
+    try {
+        const validationResult = itemValidator.validate(req.body, { abortEarly: false })
+        if (validationResult.error) {
+            res.status(400).json(validationResult)
+        } else {
+            const item = new Item({
+                title: req.body.title,
+                description: req.body.description,
+                photo: req.body.photo,
+                price: req.body.price
+            })
+            await item.save()
+            res.status(201).json({message: "Item created successfully"})
+        }    
+    } catch (error) {
+        res.status(500).json({ error })
     }
 })
 
