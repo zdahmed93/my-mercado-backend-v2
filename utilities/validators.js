@@ -7,6 +7,14 @@ const itemValidator = Joi.object({
     price: Joi.number().required()
 });
 
+const registerValidator = Joi.object({
+    firstName: Joi.string().required(),
+    lastName: Joi.string(),
+    email: Joi.string().email().required(),
+    password: Joi.string().required().min(4)
+})
+
 module.exports = {
-    itemValidator
+    itemValidator,
+    registerValidator
 }
