@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/User');
 const { registerValidator, loginValidator } = require('../utilities/validators');
@@ -56,10 +57,11 @@ const login = async (req, res) => {
                 return;
             }
             user.password = undefined;
+            const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET);
             res.status(200).json({
                 message: `Welcome ${user.firstName}`,
                 user,
-                token: 'token'
+                token
             });
         }
     } catch (error) {
