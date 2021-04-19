@@ -33,7 +33,8 @@ const createItem = async (req, res) => {
                 title: req.body.title,
                 description: req.body.description,
                 photo: req.body.photo,
-                price: req.body.price
+                price: req.body.price,
+                user: req.user._id
             })
             await item.save()
             res.status(201).json({message: "Item created successfully"})
@@ -50,7 +51,7 @@ const updateItem = async (req, res) => {
         if (validationResult.error) {
             res.json(validationResult)
         } else {
-            const item = await Item.findByIdAndUpdate(itemToUpdateId, req.body)
+            const item = await Item.findOneAndUpdate({ _id: itemToUpdateId, user: req.user._id }, { $set: req.body })
             if (!item) {
                 res.status(404).json({error: "Item not found"})
             } else {
@@ -65,7 +66,7 @@ const updateItem = async (req, res) => {
 const deleteItem = async (req, res) => {
     try {
         const itemToDeleteId = req.params.id
-        const result = await Item.deleteOne({ _id: itemToDeleteId })
+        const result = await Item.deleteOne({ _id: itemToDeleteId, user: req.user._id })
         if (result.deletedCount === 1) {
             res.json({message: "Item deleted successfully"})
         } else {
