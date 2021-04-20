@@ -3,7 +3,7 @@ const { itemValidator } = require('../utilities/validators')
 
 const getAllItems = async (req, res) => {
     try {
-        const items = await Item.find()
+        const items = await Item.find().populate('user', 'firstName lastName email')
         res.status(200).json(items)
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -12,7 +12,7 @@ const getAllItems = async (req, res) => {
 
 const getOneItem = async (req, res) => {
     try {
-        const item = await Item.findById(req.params.id)
+        const item = await Item.findById(req.params.id).populate('user', 'firstName lastName email')
         if (item) {
             res.status(200).json(item)
         } else {
