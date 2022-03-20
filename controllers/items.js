@@ -36,8 +36,11 @@ const createItem = async (req, res) => {
                 price: req.body.price,
                 user: req.user._id
             })
-            await item.save()
-            res.status(201).json({message: "Item created successfully"})
+            const savedItem = await item.save()
+            res.status(201).json({
+                message: "Item created successfully",
+                item: savedItem
+            })
         }    
     } catch (error) {
         res.status(500).json({ error: error.message })
@@ -51,11 +54,14 @@ const updateItem = async (req, res) => {
         if (validationResult.error) {
             res.json(validationResult)
         } else {
-            const item = await Item.findOneAndUpdate({ _id: itemToUpdateId, user: req.user._id }, { $set: req.body })
+            const item = await Item.findOneAndUpdate({ _id: itemToUpdateId, user: req.user._id }, { $set: req.body }, { new: true })
             if (!item) {
                 res.status(404).json({error: "Item not found"})
             } else {
-                res.status(200).json({message: "Item updated successfully"})
+                res.status(200).json({
+                    message: "Item updated successfully",
+                    item
+                })
             }
         }     
     } catch (error) {
