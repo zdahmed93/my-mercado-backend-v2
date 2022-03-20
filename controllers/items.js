@@ -52,7 +52,7 @@ const updateItem = async (req, res) => {
         const itemToUpdateId = req.params.id
         const validationResult = itemValidator.validate(req.body, { abortEarly: false })
         if (validationResult.error) {
-            res.json(validationResult)
+            res.status(400).json(validationResult)
         } else {
             const item = await Item.findOneAndUpdate({ _id: itemToUpdateId, user: req.user._id }, { $set: req.body }, { new: true })
             if (!item) {
