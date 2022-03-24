@@ -36,7 +36,10 @@ const createItem = async (req, res) => {
                 price: req.body.price,
                 user: req.user._id
             })
-            const savedItem = await item.save()
+            let savedItem = await item.save()
+            req.user.password = undefined
+            req.user.__v = undefined
+            savedItem.user = req.user
             res.status(201).json({
                 message: "Item created successfully",
                 item: savedItem
