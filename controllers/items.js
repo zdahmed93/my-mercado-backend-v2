@@ -1,4 +1,5 @@
 const Item = require('../models/Item')
+const cloudinary = require('../utilities/cloudinary-config')
 const { itemValidator } = require('../utilities/validators')
 
 const getAllItems = async (req, res) => {
@@ -25,6 +26,15 @@ const getOneItem = async (req, res) => {
 
 const createItem = async (req, res) => {
     try {
+
+        // The multer middleware creates for us a temporary file inside the specified folder 'uploads-tmp'
+        if (!req.file) {
+            return res.status(400).json({ error: "A photo file is required" })
+        }
+
+        // Upload the file from the folder 'uploads-tmp' to cloudinary
+        const upload = await cloudinary.uploader.upload(req.file.path)
+
         const validationResult = itemValidator.validate(req.body, { abortEarly: false })
         if (validationResult.error) {
             res.status(400).json(validationResult)
@@ -32,7 +42,7 @@ const createItem = async (req, res) => {
             const item = new Item({
                 title: req.body.title,
                 description: req.body.description,
-                photo: req.body.photo,
+                photo: upload.secure_url, // from cloudinary
                 price: req.body.price,
                 user: req.user._id
             })
