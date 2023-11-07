@@ -77,7 +77,12 @@ const deleteItem = async (req, res) => {
         const itemToDeleteId = req.params.id
         const result = await Item.deleteOne({ _id: itemToDeleteId, user: req.user._id })
         if (result.deletedCount === 1) {
-            res.json({message: "Item deleted successfully"})
+            res.json({
+                message: "Item deleted successfully",
+                item: {
+                    _id: itemToDeleteId
+                }
+            })
         } else {
             res.status(404).json({error: "Item not found"})
         }
