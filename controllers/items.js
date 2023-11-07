@@ -57,7 +57,7 @@ const updateItem = async (req, res) => {
         if (validationResult.error) {
             res.status(400).json(validationResult)
         } else {
-            const item = await Item.findOneAndUpdate({ _id: itemToUpdateId, user: req.user._id }, { $set: req.body }, { new: true })
+            const item = await Item.findOneAndUpdate({ _id: itemToUpdateId, user: req.user._id }, { $set: req.body }, { new: true, populate: "user" })
             if (!item) {
                 res.status(404).json({error: "Item not found"})
             } else {
